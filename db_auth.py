@@ -2,6 +2,7 @@ import base64
 from datetime import datetime
 from io import BytesIO
 import os
+from urllib.parse import urlencode, urlparse, parse_qsl, urlunparse
 
 from flask import abort, flash, make_response, redirect, render_template, \
     request, Response, session, url_for
@@ -40,6 +41,10 @@ class DBAuth:
     # name of default admin user
     DEFAULT_ADMIN_USER = 'admin'
 
+    # authentication form fields
+    USERNAME = 'username'
+    PASSWORD = 'password'
+
     def __init__(self, mail, logger):
         """Constructor
 
@@ -58,6 +63,19 @@ class DBAuth:
         target_url = request.args.get('url', '/')
         retry_target_url = request.args.get('url', None)
 
+        if POST_PARAM_LOGIN:
+            # Pass additional parameter specified
+            req = request.form
+            queryvals = {}
+            for key, val in req.items():
+                if key not in (self.USERNAME, self.PASSWORD):
+                    queryvals[key] = val
+            parts = urlparse(target_url)
+            target_query = dict(parse_qsl(parts.query))
+            target_query.update(queryvals)
+            parts = parts._replace(query=urlencode(target_query))
+            target_url = urlunparse(parts)
+
         self.clear_verify_session()
 
         if current_user.is_authenticated:
@@ -67,8 +85,8 @@ class DBAuth:
         db_session = self.session()
 
         if POST_PARAM_LOGIN:
-            username = request.form.get('username')
-            password = request.form.get('password')
+            username = req.get(self.USERNAME)
+            password = req.get(self.PASSWORD)
             if username:
                 user = self.find_user(db_session, name=username)
                 if self.__user_is_authorized(user, password, db_session):
