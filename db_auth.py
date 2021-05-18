@@ -402,7 +402,7 @@ class DBAuth:
 
         :param str: Password reset token
         """
-        form = self.edit_password_form(meta=wft_locales())
+        form = self.edit_password_form()
         if form.validate_on_submit():
             # create session for ConfigDB
             db_session = self.db_session()
@@ -459,7 +459,7 @@ class DBAuth:
         db_session.commit()
 
         # show password reset form
-        form = self.edit_password_form(meta=wft_locales())
+        form = self.edit_password_form()
         # set hidden field
         form.reset_password_token.data = user.reset_password_token
 
@@ -476,7 +476,8 @@ class DBAuth:
             self.password_constraints['max_length'],
             self.password_constraints['constraints'],
             self.password_constraints['min_constraints'],
-            self.password_constraints['constraints_message']
+            self.password_constraints['constraints_message'],
+            meta=wft_locales()
         )
 
     def db_session(self):
