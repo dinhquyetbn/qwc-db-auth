@@ -7,7 +7,7 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
         {% if form.customstylesheet %}
-        <link rel="stylesheet" href="{{ url_for('static', filename=form.customstylesheet) }}" type="text/css">
+        <link rel="stylesheet" href="{{ form.customstylesheet }}" type="text/css">
         {% endif %}
         {% if form.favicon %}
         <link rel="icon" href="{{form.favicon}}">

@@ -79,7 +79,7 @@
           "type": "string"
         },
         "customstylesheet": {
-          "description": "Filename of custom stylesheet placed next to regular style.css",
+          "description": "URL of custom stylesheet.",
           "type": "string"
         },
         "terms_url":{

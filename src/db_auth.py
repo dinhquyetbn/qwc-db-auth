@@ -72,6 +72,8 @@ class DBAuth:
         self.login_logo = config.get('logo_image_url')
         self.login_background = config.get('background_image_url')
         self.customstylesheet = config.get('customstylesheet')
+        if not self.customstylesheet.startswith('/') and not self.customstylesheet.startswith('http'):
+            self.customstylesheet = url_for('static', filename=self.customstylesheet)
         self.terms_url = config.get('terms_url')
         self.login_hint = config.get('login_hint')
         if isinstance(self.login_hint, dict):
