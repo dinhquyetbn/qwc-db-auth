@@ -985,7 +985,7 @@ class DBAuth:
             )
             if (
                 pw_history and
-                datetime.utcnow() >
+                datetime.datetime.now(datetime.UTC) >
                     pw_history.created_at.replace(tzinfo=datetime.UTC) + datetime.timedelta(days=expiry)
             ):
                 # password has expired
