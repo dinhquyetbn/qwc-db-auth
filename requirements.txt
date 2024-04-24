@@ -6,7 +6,7 @@ Flask-WTF==1.2.1
 Flask-Mail2==1.0.2
 Pillow==10.1.0
 psycopg2==2.9.9
-SQLAlchemy==2.0.23
+SQLAlchemy==2.0.29
 pyotp==2.9.0
 qrcode==7.4.2
 python-i18n==0.3.9
