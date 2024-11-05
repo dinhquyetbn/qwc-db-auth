@@ -1,12 +1,12 @@
 {
   "en": {
     "login_page_title": "Sign In",
-    "login_form_title": "Login",
-    "login_button": "Log in",
-    "username_placeholder": "username",
-    "password_placeholder": "password",
-    "forgot_password": "Forgot your password?",
-    "auth_failed": "Invalid username or password",
+    "login_form_title": "Đăng nhập",
+    "login_button": "ĐĂNG NHẬP",
+    "username_placeholder": "Email",
+    "password_placeholder": "Mật khẩu",
+    "forgot_password": "Quên mật khẩu?",
+    "auth_failed": "Email / Mật khẩu không chính xác",
     "validation_error": "Form validation error",
 
     "login_link": "Sign In",

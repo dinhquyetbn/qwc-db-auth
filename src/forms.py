@@ -7,8 +7,8 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired('Vui lòng nhập email.')])
+    password = PasswordField('Password', validators=[DataRequired('Vui lòng nhập mật khẩu.')])
     submit = SubmitField('Sign In')
     logo = "http://qwc2.sourcepole.ch/assets/img/logo.svg"
     background = ""

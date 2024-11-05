@@ -15,7 +15,9 @@ from qwc_services_core.tenant_handler import (
 from db_auth import DBAuth
 
 
-app = Flask(__name__)
+app = Flask(__name__,
+            static_folder='static',
+            template_folder='templates')
 
 app.config['JWT_COOKIE_SECURE'] = os.environ.get(
     'JWT_COOKIE_SECURE', 'False') == 'True'

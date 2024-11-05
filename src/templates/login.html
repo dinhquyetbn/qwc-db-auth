@@ -1,16 +1,25 @@
 {% extends "base.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}"  type="text/css">
+{% endblock %}
+
 {% block content %}
+<div class="login-container">
     <form action="" method="post" autocomplete="off">
         {{ form.hidden_tag() }}
         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token }}">
         <div class="login">
-            <div class="login-screen">
+            <div class="login-banner">
+                <img class="app-logo" src="{{ url_for('static', filename='images/logo.svg') }}" alt="logo" />
+                <p>Quản Lý Nhà Công Sản</p>
+            </div>
+            <div class="login-screen">                
                 <div class="app-title">
-                    {% if form.logo %}
+                    <!-- {% if form.logo %}
                         <img class="app-logo" src="{{form.logo}}" alt="logo" />
-                    {% endif %}
-                    <h1>{{ i18n.t('auth.login_form_title') }}</h1>
+                    {% endif %} -->
+                    <h2>{{ i18n.t('auth.login_form_title') }}</h2>
                 </div>
      
                 <div class="login-form">
@@ -24,7 +33,7 @@
                            placeholder="{{ i18n.t('auth.username_placeholder') }}" name="username" autofocus="">
                     <label class="login-field-icon fui-user" for="login-name"></label>
                     {% for error in form.username.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
+                    <span style="color: red; margin-top: 5px;">{{ error }}</span>
                     {% endfor %}
                     </div>
      
@@ -33,22 +42,30 @@
                            placeholder="{{ i18n.t('auth.password_placeholder') }}" name="password">
                     <label class="login-field-icon fui-lock" for="login-pass"></label>
                     {% for error in form.password.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
+                    <span style="color: red; margin-top: 5px;">{{ error }}</span>
                     {% endfor %}
+                    </div>
+                    <div class="control-group chk-remember">
+                        <input type="checkbox" />
+                        <label>Ghi nhớ mật khẩu</label>
                     </div>
      
                     <input type="submit" value="{{ i18n.t('auth.login_button') }}"
-                           class="btn btn-primary btn-large btn-block" >
+                           class="btn btn-login btn-large btn-block" >
                     <br>
                 </div>
+                <div class="login-version">
+                    <p>Version 1.0.0</p>
+                </div>
 
-                <div>
+                <!-- <div>
                     <a href="{{ url_for('new_password') }}" class="login-link">{{ i18n.t('auth.forgot_password') }}</a>
                     {% if form.terms_url %}
                     <a href="{{form.terms_url}}" class="login-link">Terms and conditions</a>
                     {% endif %}
-                </div>
+                </div> -->
             </div>
         </div>
     </form>
+</div>
 {% endblock %}

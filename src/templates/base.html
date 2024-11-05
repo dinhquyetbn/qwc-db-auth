@@ -5,7 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
+        <!-- Link to Roboto Font from Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
+        {% block head %}{% endblock %} 
         {% if form.customstylesheet %}
         <link rel="stylesheet" href="{{ form.customstylesheet }}" type="text/css">
         {% endif %}
