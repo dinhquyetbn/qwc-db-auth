@@ -187,6 +187,11 @@ class DBAuth:
         if form.validate_on_submit():
             user = self.find_user(db_session, name=form.username.data)
 
+            user_not_exist = user is None
+            # check exist user
+            if user_not_exist: 
+                form.username.errors.append(i18n.t('Tài khoản không tồn tại.'))
+
             # force password change on first sign in of default admin user
             # NOTE: user.last_sign_in_at will be set after successful auth
             force_password_change = (
@@ -251,14 +256,15 @@ class DBAuth:
                         db_session
                     )
             else:
-                form.username.errors.append(i18n.t('auth.auth_failed'))
-                form.password.errors.append(i18n.t('auth.auth_failed'))
+                # form.username.errors.append(i18n.t('auth.auth_failed'))
+                if not user_not_exist:
+                    form.password.errors.append(i18n.t('Mật khẩu không chính xác.'))
                 # Maybe different message when
                 # user.failed_sign_in_count >= MAX_LOGIN_ATTEMPTS
 
         return self.response(
             render_template('login.html', form=form, i18n=i18n,
-                            title=i18n.t("auth.login_page_title"),
+                            title=i18n.t("Đăng nhập"),
                             login_hint=self.login_hint,
                             csrf_token=self.csrf_token()),
             db_session

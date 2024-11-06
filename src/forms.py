@@ -9,8 +9,8 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired('Vui lòng nhập email.')])
     password = PasswordField('Password', validators=[DataRequired('Vui lòng nhập mật khẩu.')])
-    submit = SubmitField('Sign In')
-    logo = "http://qwc2.sourcepole.ch/assets/img/logo.svg"
+    submit = SubmitField('Đăng nhập')
+    logo = ""
     background = ""
     terms_url = "https://qgis.org/en/site/"
 

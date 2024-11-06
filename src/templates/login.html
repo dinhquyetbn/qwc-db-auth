@@ -38,13 +38,31 @@
                     </div>
      
                     <div class="control-group">
-                    <input type="password" class="login-field" value=""
+                    <input id="password" type="password" class="login-field" value=""
                            placeholder="{{ i18n.t('auth.password_placeholder') }}" name="password">
                     <label class="login-field-icon fui-lock" for="login-pass"></label>
+                    <span class="toggle-password" onclick="togglePasswordVisibility()">
+                        <i class="eye-icon eye-open"></i>
+                    </span>
                     {% for error in form.password.errors %}
                     <span style="color: red; margin-top: 5px;">{{ error }}</span>
                     {% endfor %}
                     </div>
+                    <script>
+                        function togglePasswordVisibility() {
+                            var passwordField = document.getElementById("password");
+                            var eyeIcon = document.querySelector(".toggle-password .eye-icon");
+                            if (passwordField.type === "password") {
+                                passwordField.type = "text";
+                                eyeIcon.classList.add("eye-closed");
+                                eyeIcon.classList.remove("eye-open");
+                            } else {
+                                passwordField.type = "password";
+                                eyeIcon.classList.add("eye-open");
+                                eyeIcon.classList.remove("eye-closed");                                
+                            }
+                        }
+                    </script>
                     <div class="control-group chk-remember">
                         <input type="checkbox" />
                         <label>Ghi nhớ mật khẩu</label>

@@ -23,9 +23,9 @@
 
 .login-banner {
     text-align: center;
-    height: 160px;
+    height: 165px;
     position: relative;
-    top: 125px;
+    top: 130px;
     background-image: url('../images/banner_login.svg');
     background-size: contain;  /* hoặc cover tùy theo nhu cầu */
     background-position: center;
@@ -53,6 +53,7 @@
     background-color: #fff;
     text-align: left;
     padding-left: 10px;
+    margin-bottom: 5px;
 }
 
 .login-form input::placeholder {
@@ -75,6 +76,7 @@
     border-radius: 10px !important;
     background: var(--menu-bkg, linear-gradient(180deg, #0054A6 0%, #0A3B7B 100%));
     font-weight: 700;
+    cursor: pointer;
 }
 
 .chk-remember {
@@ -84,4 +86,27 @@
 
 .chk-remember input {
     width: auto;
+}
+
+.toggle-password {
+    position: relative;
+    top: -35px;
+    right: 10px;
+    float: right;
+}
+
+.eye-icon {
+    cursor: pointer;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-size: cover;
+}
+
+.eye-open {
+    background-image: url('../images/eye_open.svg'); /* Đường dẫn đến biểu tượng mắt mở */
+}
+
+.eye-closed {
+    background-image: url('../images/eye_close.svg'); /* Đường dẫn đến biểu tượng mắt đóng */
 }

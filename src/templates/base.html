@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>{{title}}</title>
+        <title>{{title}} | Hệ thống quản lý nhà công sản</title>
         <meta content="ie=edge" http-equiv="x-ua-compatible">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,9 +12,10 @@
         {% if form.customstylesheet %}
         <link rel="stylesheet" href="{{ form.customstylesheet }}" type="text/css">
         {% endif %}
-        {% if form.favicon %}
+        <link rel="icon" href="../static/images/logo.ico" type="image/x-icon">
+        <!-- {% if form.favicon %}
         <link rel="icon" href="{{form.favicon}}">
-        {% endif %}
+        {% endif %} -->
     </head>
     <body>
         {% if form.background %}
