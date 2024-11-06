@@ -12,7 +12,7 @@
         {% if form.customstylesheet %}
         <link rel="stylesheet" href="{{ form.customstylesheet }}" type="text/css">
         {% endif %}
-        <link rel="icon" href="../static/images/logo.ico" type="image/x-icon">
+        <link rel="icon" href="{{ url_for('static', filename='images/logo.ico') }}" type="image/x-icon">
         <!-- {% if form.favicon %}
         <link rel="icon" href="{{form.favicon}}">
         {% endif %} -->
