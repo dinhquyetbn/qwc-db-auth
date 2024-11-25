@@ -812,22 +812,25 @@ class DBAuth:
         login_user(user)
 
         # Create the tokens we will be sending back to the user
-        identity = {
-            'username': user.name
-        }
+        identity = user.name
+        # identity = {
+        #     'username': user.name,
+        #     # 'user_id': user.id
+        # }
         # collect custom user info fields
-        user_info = user.user_info
+        #user_info = user.user_info
         # Always store user_id
-        identity["user_id"] = user.id
-        for field in self.user_info_fields:
-            if hasattr(user_info, field):
-                identity[field] = getattr(user_info, field)
-            else:
-                self.logger.warning(
-                    "User info field '%s' does not exist" % field
-                )
+        # identity["user_id"] = user.id
+        # for field in self.user_info_fields:
+        #     if hasattr(user_info, field):
+        #         identity[field] = getattr(user_info, field)
+        #     else:
+        #         self.logger.warning(
+        #             "User info field '%s' does not exist" % field
+        #         )
 
         access_token = create_access_token(identity=identity)
+        print(access_token)
         # refresh_token = create_refresh_token(identity=identity)
 
         # check if password will soon expire
@@ -851,7 +854,6 @@ class DBAuth:
                 csrf_token=self.csrf_token()
             )
             resp = make_response(page)
-
         # Set the JWTs and the CSRF double submit protection cookies
         # in this response
         set_access_cookies(resp, access_token)
