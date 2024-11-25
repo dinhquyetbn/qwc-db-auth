@@ -23,7 +23,8 @@ html, body {
   background-position: center;
 }
 .login {
-  margin: 0 auto 160px auto;
+  /* margin: 0 auto 160px auto; */
+  height: 100vh;
   width: 400px;
 }
 .new-password {

@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="login-container">
-    <form action="" method="post" autocomplete="off">
+    <form action="" method="post" autocomplete="off" class="m-0">
         {{ form.hidden_tag() }}
         <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token }}">
         <div class="login">

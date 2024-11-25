@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    height: 100vh;
     background-color: #F0F2F5;
     background-image: url('../images/bg_login.svg');
     background-size: contain;  /* hoặc cover tùy theo nhu cầu */
