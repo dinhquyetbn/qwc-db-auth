@@ -828,8 +828,9 @@ class DBAuth:
         #         self.logger.warning(
         #             "User info field '%s' does not exist" % field
         #         )
+        additional_claims = {"qwc_identity": user.id}
 
-        access_token = create_access_token(identity=identity)
+        access_token = create_access_token(identity=identity, additional_claims=additional_claims)
         print(access_token)
         # refresh_token = create_refresh_token(identity=identity)
 
