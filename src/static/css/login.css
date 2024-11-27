@@ -8,6 +8,7 @@
     background-size: contain;  /* hoặc cover tùy theo nhu cầu */
     background-position: bottom;
     background-repeat: no-repeat;
+    overflow-y: scroll;
 }
 
 .login-screen {
