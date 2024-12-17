@@ -815,23 +815,30 @@ class DBAuth:
         identity = user.name
         # identity = {
         #     'username': user.name,
-        #     # 'user_id': user.id
+        #     'user_id': user.id
         # }
         # collect custom user info fields
-        #user_info = user.user_info
+        user_info = user.user_info
+        jwt_user = {
+            "id": user.id,
+            "username": user.name,
+            "uuid": user.uuid
+        }
         # Always store user_id
-        # identity["user_id"] = user.id
-        # for field in self.user_info_fields:
-        #     if hasattr(user_info, field):
-        #         identity[field] = getattr(user_info, field)
-        #     else:
-        #         self.logger.warning(
-        #             "User info field '%s' does not exist" % field
-        #         )
-        additional_claims = {"qwc_identity": user.id}
+        for field in self.user_info_fields:
+            if hasattr(user_info, field):
+                jwt_user[field] = getattr(user_info, field)
+            else:
+                self.logger.warning(
+                    "User info field '%s' does not exist" % field
+                )
+        additional_claims = {
+            "qwc_identity": user.id,
+            "user_info": jwt_user
+        }
 
         access_token = create_access_token(identity=identity, additional_claims=additional_claims)
-        print(access_token)
+        #print(access_token)
         # refresh_token = create_refresh_token(identity=identity)
 
         # check if password will soon expire
