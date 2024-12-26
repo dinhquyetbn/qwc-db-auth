@@ -1,9 +1,8 @@
 import base64
-import datetime
 from io import BytesIO
 import os
 from urllib.parse import urlencode, urlparse, parse_qsl, urlunparse, unquote
-
+from datetime import datetime, timezone
 from flask import abort, flash, make_response, redirect, render_template, \
     request, Response, session, url_for, get_flashed_messages, jsonify
 from flask_login import current_user, login_user, logout_user
@@ -19,7 +18,6 @@ from qwc_services_core.auth import get_username
 from qwc_services_core.database import DatabaseEngine
 from qwc_services_core.config_models import ConfigModels
 from qwc_services_core.runtime_config import RuntimeConfig
-
 from forms import LoginForm, NewPasswordForm, EditPasswordForm, VerifyForm
 
 
@@ -106,6 +104,7 @@ class DBAuth:
         )
         self.User = self.config_models.model('users')
         self.PasswordHistory = self.config_models.model('password_histories')
+        self.Roles = self.config_models.model('roles')
 
         # toggle password history according to config settings
         self.password_history_active = (
@@ -168,7 +167,7 @@ class DBAuth:
                 user = self.find_user(db_session, name=username)
                 if self.__user_is_authorized(user, password, db_session):
                     return self.response(
-                        self.__login_response(user, target_url), db_session
+                        self.__login_response(user, target_url, db_session), db_session
                     )
                 else:
                     self.logger.info(
@@ -191,6 +190,8 @@ class DBAuth:
             # check exist user
             if user_not_exist: 
                 form.username.errors.append(i18n.t('Tài khoản không tồn tại.'))
+            elif not user.is_active:
+                form.username.errors.append(i18n.t('Tài khoản đang bị khóa.'))
 
             # force password change on first sign in of default admin user
             # NOTE: user.last_sign_in_at will be set after successful auth
@@ -234,7 +235,7 @@ class DBAuth:
                     else:
                         # login successful
                         return self.response(
-                            self.__login_response(user, target_url),
+                            self.__login_response(user, target_url, db_session),
                             db_session
                         )
                 else:
@@ -320,7 +321,7 @@ class DBAuth:
                 # TOTP verified
                 target_url = session.pop('target_url', self.tenant_base())
                 self.clear_verify_session()
-                return self.__login_response(user, target_url)
+                return self.__login_response(user, target_url, db_session)
             else:
                 flash(i18n.t('auth.verfication_invalid'))
                 form.token.errors.append(i18n.t('auth.verfication_invalid'))
@@ -389,13 +390,13 @@ class DBAuth:
                 user.totp_secret = totp_secret
                 # update last sign in timestamp and reset failed attempts
                 # counter
-                user.last_sign_in_at = datetime.datetime.now(datetime.UTC)
+                user.last_sign_in_at = datetime.now(timezone.utc)
                 user.failed_sign_in_count = 0
                 db_session.commit()
 
                 target_url = session.pop('target_url', self.tenant_base())
                 self.clear_verify_session()
-                return self.__login_response(user, target_url)
+                return self.__login_response(user, target_url, db_session)
             else:
                 flash(i18n.t('auth.verfication_invalid'))
                 form.token.errors.append(i18n.t('auth.verfication_invalid'))
@@ -594,7 +595,7 @@ class DBAuth:
                 if user.last_sign_in_at is None:
                     # set last sign in timestamp after required password change
                     # to mark as password changed
-                    user.last_sign_in_at = datetime.datetime.now(datetime.UTC)
+                    user.last_sign_in_at = datetime.now(timezone.utc)
                 db_session.commit()
 
                 if self.password_history_active:
@@ -754,7 +755,7 @@ class DBAuth:
                 if not TOTP_ENABLED:
                     # update last sign in timestamp and reset failed attempts
                     # counter
-                    user.last_sign_in_at = datetime.datetime.now(datetime.UTC)
+                    user.last_sign_in_at = datetime.now(timezone.utc)
                     user.failed_sign_in_count = 0
                     db_session.commit()
 
@@ -785,7 +786,7 @@ class DBAuth:
         elif pyotp.totp.TOTP(user.totp_secret).verify(token, valid_window=1):
             # valid token
             # update last sign in timestamp and reset failed attempts counter
-            user.last_sign_in_at = datetime.datetime.now(datetime.UTC)
+            user.last_sign_in_at = datetime.now(timezone.utc)
             user.failed_sign_in_count = 0
             db_session.commit()
 
@@ -806,7 +807,7 @@ class DBAuth:
         session.pop('totp_secret', None)
         session.pop('show_qrcode', None)
 
-    def __login_response(self, user, target_url):
+    def __login_response(self, user, target_url, db_session):
         self.logger.info("Logging in as user '%s'" % user.name)
         # flask_login stores user in session
         login_user(user)
@@ -819,10 +820,22 @@ class DBAuth:
         # }
         # collect custom user info fields
         user_info = user.user_info
+        
+        # get roles by user   
+        query_roles = db_session.query(self.Roles)
+        user_roles_query = query_roles.join(self.Roles.users_collection) \
+            .filter(self.User.name == user.name).all()
+        
         jwt_user = {
             "id": user.id,
             "username": user.name,
-            "uuid": user.uuid
+            "uuid": user.uuid,
+            "don_vi_id": user.don_vi_id,
+            "chuc_vu_id": user.chuc_vu_id,
+            "tai_khoan_cap": user.tai_khoan_cap,
+            "acc_ke_khai": user.acc_ke_khai,
+            "acc_phe_duyet": user.acc_phe_duyet,
+            "roles": [item.name for item in user_roles_query]
         }
         # Always store user_id
         for field in self.user_info_fields:
@@ -928,7 +941,7 @@ class DBAuth:
         pw_history = self.PasswordHistory(
             user=user,
             password_hash=user.password_hash,
-            created_at=datetime.datetime.now(datetime.UTC)
+            created_at=datetime.now(timezone.utc)
         )
         db_session.add(pw_history)
         db_session.commit()
@@ -975,8 +988,8 @@ class DBAuth:
             if pw_history:
                 # calculate remaining days
                 expires_at = pw_history.created_at.replace(tzinfo=datetime.UTC) + datetime.timedelta(days=expiry)
-                if datetime.datetime.now(datetime.UTC) < expires_at:
-                    delta = expires_at - datetime.datetime.now(datetime.UTC)
+                if datetime.now(timezone.utc) < expires_at:
+                    delta = expires_at - datetime.now(timezone.utc)
                     days_remaining = delta.days
                     if delta.seconds > 0:
                         # round up partial days
@@ -1001,7 +1014,7 @@ class DBAuth:
             )
             if (
                 pw_history and
-                datetime.datetime.now(datetime.UTC) >
+                datetime.now(timezone.utc) >
                     pw_history.created_at.replace(tzinfo=datetime.UTC) + datetime.timedelta(days=expiry)
             ):
                 # password has expired
@@ -1027,7 +1040,7 @@ class DBAuth:
             # check time since last password update
             if (
                 pw_history and
-                datetime.datetime.now(datetime.UTC) <
+                datetime.now(timezone.utc) <
                     pw_history.created_at.replace(tzinfo=datetime.UTC) + datetime.timedelta(seconds=update_interval)
             ):
                 # time since last update was too short
